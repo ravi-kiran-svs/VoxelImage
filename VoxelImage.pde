@@ -11,32 +11,34 @@ boolean[] isKeyOn = new boolean[] {false, false, false, false};
 The 3 images should be stored in /data as "common-name_number", number 1, 2, 3 respectively.
 Modify the below variable to the common-name
 */
-String fileSet = "trinity-128";
+//String fileSet = "trinity-128";
+String fileSet = "witcher_wolf-256";
 /*
 Recommended resolution = 128*128.
 Higher resolutions take time to load and are slower.
 Change the below variable to the resolution when changed.
 Recommended resolution to be in power of 2.
 */
-int resolution = 128;
+int resolution = 256;
 /*
 When the below variable is true, the camera moves in a predefined path.
 When false, user can manually control using the arrow keys and '1', '2', '3' keys to re-orient the camera.
 */
 boolean autoRotate = true;
-float speed = 1;
+float speed = 0.05;
 
 int timeDelay = (int) (5000/speed);
 float pixelSpeed = speed/100;
 int l = resolution/2;
 
-color bg = color(12, 0, 6);
-color stroke = color(125, 225, 255);
+color bg = color(13, 0, 13);
+color stroke = color(128, 255, 255);
 
 void setup()	{
 
 	size(800, 600);
 	stroke(stroke);
+	frameRate(1);
 
 	images[0] = loadImage(fileSet + "_" + 1 + ".png");
 	images[1] = loadImage(fileSet + "_" + 2 + ".png");
@@ -253,12 +255,13 @@ void draw()	{
 	background(bg);
 
 	float[][] M = cam.getTransformationalMatrix();
+	loadPixels();
 	for(Voxel voxel: voxels) {
 		voxel.draw(M);
 	}
+	updatePixels();
 
 	//println(frameRate);
-
 }
 
 interface VoxelDrawer	{
@@ -267,7 +270,11 @@ interface VoxelDrawer	{
 
 VoxelDrawer voxelDraw = new VoxelDrawer()	{
 	public void onVoxelDraw(Vector v)	{
-		point(origin.x + 2*v.x + 0.5, origin.y - 2*v.y + 0.5);
+		int x_cor = (int) (origin.x + 2*v.x);
+		int y_cor = (int) (origin.y - 2*v.y);
+		if (x_cor >= 0 && x_cor < width && y_cor >= 0 && y_cor < height) {
+			pixels[y_cor*width + x_cor] = stroke;
+		}
 	}
 };
 
